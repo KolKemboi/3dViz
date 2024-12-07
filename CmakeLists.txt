@@ -1,33 +1,51 @@
 cmake_minimum_required(VERSION 3.29.0)
-project(OpenGLProject)
+project(3dViz)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(EXECUTABLE_NAME "OPenGLApp")
+set(EXECUTABLE_NAME "3dViz")
+
+set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/vendor/imgui)
 
 set(
     SOURCE_FILES
     src/main.cpp
     lib/glad.c
-    )
+)
 
 include_directories(
     include/
     include/glad
     include/glfw
-    )
+)
+
+set(IMGUI_FILES
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/imgui_impl_opengl3.cpp
+)
+
 find_package(OpenGL REQUIRED)
 
 set(GLFW_LIB_PATH "${CMAKE_SOURCE_DIR}/lib/glfw3.lib")
 set(GLFW_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/include/glfw")
 
+# Add the GLFW library
 add_library(glfw STATIC IMPORTED)
 set_target_properties(glfw PROPERTIES
     IMPORTED_LOCATION ${GLFW_LIB_PATH}
 )
 include_directories(${GLFW_INCLUDE_PATH})
 
-add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
+# Add the executable target
+add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES} ${IMGUI_FILES})
 
+# Include IMGUI headers
+include_directories(${IMGUI_DIR})
+
+# Link libraries
 target_link_libraries(${EXECUTABLE_NAME} OpenGL::GL glfw)
